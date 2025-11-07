@@ -23,26 +23,40 @@ namespace TaskTray
 
         public TrayAppContext()
         {
-            // メニュー作成
+            // ======== メインメニュー構築 ========
             _menu = new ContextMenuStrip();
+
+            // 通常メニュー項目
             _menu.Items.Add("今すぐ処理実行", null, OnRunNowClicked);
             _menu.Items.Add("ログフォルダを開く", null, OnOpenLogClicked);
+
+            // === サブメニュー（ツール） ===
+            var toolsMenu = new ToolStripMenuItem("ツール");
+
+            var tool1 = new ToolStripMenuItem("メニュー1", null, OnTool1Clicked);
+            var tool2 = new ToolStripMenuItem("メニュー2", null, OnTool2Clicked);
+            var tool3 = new ToolStripMenuItem("メニュー3", null, OnTool3Clicked);
+
+            toolsMenu.DropDownItems.Add(tool1);
+            toolsMenu.DropDownItems.Add(tool2);
+            toolsMenu.DropDownItems.Add(new ToolStripSeparator());
+            toolsMenu.DropDownItems.Add(tool3);
+
+            _menu.Items.Add(toolsMenu);
             _menu.Items.Add(new ToolStripSeparator());
             _menu.Items.Add("終了", null, OnExitClicked);
 
-            // NotifyIcon 作成
+            // ======== NotifyIcon 設定 ========
             _notifyIcon = new NotifyIcon
             {
-                Icon = new Icon("app.ico"),           // プロジェクトに追加した .ico
-                Text = "タスクトレイ常駐ツール",
+                Icon = new Icon("app.ico"),           // .ico ファイルを指定
+                Text = "サブメニュー付きタスクトレイ",
                 ContextMenuStrip = _menu,
                 Visible = true
             };
 
-            // 左ダブルクリックで「今すぐ処理実行」にしてもOK
             _notifyIcon.DoubleClick += OnRunNowClicked;
 
-            // 起動通知（任意）
             _notifyIcon.ShowBalloonTip(
                 1000,
                 "起動しました",
@@ -51,77 +65,45 @@ namespace TaskTray
             );
         }
 
-        /// <summary>
-        /// 「今すぐ処理実行」が押されたときの処理
-        /// </summary>
+        // ---- 通常メニュー ----
         private void OnRunNowClicked(object sender, EventArgs e)
         {
-            try
-            {
-                // ★ここに実行したい本処理を書く ★
-                // 例: 簡単なログを書き出す
-                var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-                Directory.CreateDirectory(logDir);
-                var logPath = Path.Combine(logDir, "log.txt");
-                File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 実行しました{Environment.NewLine}");
-
-                _notifyIcon.ShowBalloonTip(
-                    800,
-                    "処理完了",
-                    "タスクが正常に実行されました。",
-                    ToolTipIcon.Info
-                );
-            }
-            catch (Exception ex)
-            {
-                _notifyIcon.ShowBalloonTip(
-                    1500,
-                    "エラー",
-                    ex.Message,
-                    ToolTipIcon.Error
-                );
-            }
+            File.AppendAllText("log.txt", $"{DateTime.Now} 処理実行\n");
+            _notifyIcon.ShowBalloonTip(1000, "処理完了", "今すぐ実行しました。", ToolTipIcon.Info);
         }
 
-        /// <summary>
-        /// 「ログフォルダを開く」が押されたとき
-        /// </summary>
         private void OnOpenLogClicked(object sender, EventArgs e)
         {
-            var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            if (!Directory.Exists(logDir))
+            Process.Start(new ProcessStartInfo
             {
-                Directory.CreateDirectory(logDir);
-            }
-
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = logDir,
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                _notifyIcon.ShowBalloonTip(
-                    1500,
-                    "フォルダを開けませんでした",
-                    ex.Message,
-                    ToolTipIcon.Error
-                );
-            }
+                FileName = AppDomain.CurrentDomain.BaseDirectory,
+                UseShellExecute = true
+            });
         }
 
-        /// <summary>
-        /// 「終了」が押されたとき
-        /// </summary>
+        // ---- サブメニューの動作 ----
+        private void OnTool1Clicked(object sender, EventArgs e)
+        {
+            _notifyIcon.ShowBalloonTip(800, "メニュー1", "ツール1を実行しました。", ToolTipIcon.Info);
+        }
+
+        private void OnTool2Clicked(object sender, EventArgs e)
+        {
+            _notifyIcon.ShowBalloonTip(800, "メニュー2", "ツール2を実行しました。", ToolTipIcon.Info);
+        }
+
+        private void OnTool3Clicked(object sender, EventArgs e)
+        {
+            _notifyIcon.ShowBalloonTip(800, "メニュー3", "ツール3を実行しました。", ToolTipIcon.Info);
+        }
+
+        // ---- 終了 ----
         private void OnExitClicked(object sender, EventArgs e)
         {
             _notifyIcon.Visible = false;
             _notifyIcon.Dispose();
             _menu.Dispose();
-            ExitThread(); // Application.ExitThread と同等
+            ExitThread();
         }
 
         protected override void Dispose(bool disposing)
