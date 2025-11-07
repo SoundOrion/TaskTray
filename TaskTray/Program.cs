@@ -10,9 +10,15 @@ namespace TaskTray
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            // To customize application configuration such as set high DPI settings or default font,
+            // see https://aka.ms/applicationconfiguration.
+            ApplicationConfiguration.Initialize(); // Å© .NET 8 êVï˚éÆ
             Application.Run(new TrayAppContext());
+
+            // .net frameworkÇÕÇ±Ç¡Çø
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new TrayAppContext());
         }
     }
 
