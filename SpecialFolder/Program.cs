@@ -12,6 +12,10 @@ Console.WriteLine("=== Environment Variables ===");
 Console.WriteLine($"ProgramW6432 (64bit): {Environment.GetEnvironmentVariable("ProgramW6432")}");
 Console.WriteLine($"ProgramFiles(x86):    {Environment.GetEnvironmentVariable("ProgramFiles(x86)")}");
 Console.WriteLine($"ProgramFiles:         {Environment.GetEnvironmentVariable("ProgramFiles")}");
+Console.WriteLine($"SystemRoot:           {Environment.GetEnvironmentVariable("SystemRoot")}");
+Console.WriteLine($"UserProfile:          {Environment.GetEnvironmentVariable("UserProfile")}");
+Console.WriteLine($"Temp (TMP):           {Environment.GetEnvironmentVariable("TMP")}");
+Console.WriteLine($"Temp (TEMP):          {Environment.GetEnvironmentVariable("TEMP")}");
 
 Console.WriteLine();
 Console.WriteLine("Press any key to exit...");
