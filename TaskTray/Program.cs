@@ -1,4 +1,4 @@
-using System.Diagnostics;
+ï»¿using System.Diagnostics;
 
 namespace TaskTray
 {
@@ -12,10 +12,10 @@ namespace TaskTray
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize(); // © .NET 8 V•û®
+            ApplicationConfiguration.Initialize(); // â† .NET 8 æ–°æ–¹å¼
             Application.Run(new TrayAppContext());
 
-            // .net framework‚Í‚±‚Á‚¿
+            // .net frameworkã¯ã“ã£ã¡
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new TrayAppContext());
@@ -27,36 +27,63 @@ namespace TaskTray
         private readonly NotifyIcon _notifyIcon;
         private readonly ContextMenuStrip _menu;
 
+        // ãƒˆã‚°ãƒ«çŠ¶æ…‹ï¼ˆå¿…è¦ãªã‚‰å¤–éƒ¨ä¿å­˜ã‚‚å¯ï¼‰
+        private bool _featureAEnabled = true;
+        private bool _featureBEnabled = false;
+
         public TrayAppContext()
         {
-            // ======== ƒƒCƒ“ƒƒjƒ…[\’z ========
             _menu = new ContextMenuStrip();
 
-            // ’Êíƒƒjƒ…[€–Ú
-            _menu.Items.Add("¡‚·‚®ˆ—Às", null, OnRunNowClicked);
-            _menu.Items.Add("ƒƒOƒtƒHƒ‹ƒ_‚ğŠJ‚­", null, OnOpenLogClicked);
+            // é€šå¸¸ãƒ¡ãƒ‹ãƒ¥ãƒ¼
+            _menu.Items.Add("ä»Šã™ãå‡¦ç†å®Ÿè¡Œ", null, OnRunNowClicked);
 
-            // === ƒTƒuƒƒjƒ…[iƒc[ƒ‹j ===
-            var toolsMenu = new ToolStripMenuItem("ƒc[ƒ‹");
+            // ===== ãƒ„ãƒ¼ãƒ«ï¼ˆã‚µãƒ–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ï¼‰ =====
+            var toolsMenu = new ToolStripMenuItem("ãƒ„ãƒ¼ãƒ«");
 
-            var tool1 = new ToolStripMenuItem("ƒƒjƒ…[1", null, OnTool1Clicked);
-            var tool2 = new ToolStripMenuItem("ƒƒjƒ…[2", null, OnTool2Clicked);
-            var tool3 = new ToolStripMenuItem("ƒƒjƒ…[3", null, OnTool3Clicked);
+            // ãƒˆã‚°ãƒ«é …ç›®A
+            var toggleAItem = new ToolStripMenuItem("æ©Ÿèƒ½A æœ‰åŠ¹")
+            {
+                CheckOnClick = true,    //ã“ã®è¨­å®šã‚’ã™ã‚‹ã¨ã€ã‚¯ãƒªãƒƒã‚¯ã—ãŸã¨ãã«è‡ªå‹•ã§ãƒã‚§ãƒƒã‚¯çŠ¶æ…‹ï¼ˆâœ”ï¼‰ãŒãƒˆã‚°ãƒ«ã•ã‚Œã¾ã™ã€‚
+                Checked = _featureAEnabled  //åˆæœŸçŠ¶æ…‹ï¼ˆãƒã‚§ãƒƒã‚¯ä»˜ã or ãªã—ï¼‰ã‚’æŒ‡å®šã—ã¾ã™ã€‚
+            };
+            toggleAItem.CheckedChanged += (s, e) =>
+            {
+                _featureAEnabled = toggleAItem.Checked;
+                UpdateToggleAText(toggleAItem);
 
-            toolsMenu.DropDownItems.Add(tool1);
-            toolsMenu.DropDownItems.Add(tool2);
-            toolsMenu.DropDownItems.Add(new ToolStripSeparator());
-            toolsMenu.DropDownItems.Add(tool3);
+                _notifyIcon.ShowBalloonTip(
+                    800,
+                    "æ©Ÿèƒ½A",
+                    _featureAEnabled ? "æ©Ÿèƒ½Aã‚’ONã«ã—ã¾ã—ãŸã€‚" : "æ©Ÿèƒ½Aã‚’OFFã«ã—ã¾ã—ãŸã€‚",
+                    ToolTipIcon.Info
+                );
+            };
+
+            // ãƒˆã‚°ãƒ«é …ç›®B
+            var toggleBItem = new ToolStripMenuItem("æ©Ÿèƒ½B æœ‰åŠ¹")
+            {
+                CheckOnClick = true,
+                Checked = _featureBEnabled
+            };
+            toggleBItem.CheckedChanged += (s, e) =>
+            {
+                _featureBEnabled = toggleBItem.Checked;
+                UpdateToggleBText(toggleBItem);
+            };
+
+            toolsMenu.DropDownItems.Add(toggleAItem);
+            toolsMenu.DropDownItems.Add(toggleBItem);
 
             _menu.Items.Add(toolsMenu);
             _menu.Items.Add(new ToolStripSeparator());
-            _menu.Items.Add("I—¹", null, OnExitClicked);
+            _menu.Items.Add("çµ‚äº†", null, OnExitClicked);
 
-            // ======== NotifyIcon İ’è ========
+            // ===== NotifyIcon =====
             _notifyIcon = new NotifyIcon
             {
-                Icon = new Icon("app.ico"),           // .ico ƒtƒ@ƒCƒ‹‚ğw’è
-                Text = "ƒTƒuƒƒjƒ…[•t‚«ƒ^ƒXƒNƒgƒŒƒC",
+                Icon = new Icon("app.ico"),
+                Text = "ãƒˆã‚°ãƒ«ä»˜ããƒˆãƒ¬ã‚¤ãƒ„ãƒ¼ãƒ«",
                 ContextMenuStrip = _menu,
                 Visible = true
             };
@@ -65,45 +92,48 @@ namespace TaskTray
 
             _notifyIcon.ShowBalloonTip(
                 1000,
-                "‹N“®‚µ‚Ü‚µ‚½",
-                "‰EƒNƒŠƒbƒNƒƒjƒ…[‚©‚ç‘€ì‚Å‚«‚Ü‚·B",
+                "èµ·å‹•ã—ã¾ã—ãŸ",
+                "å³ã‚¯ãƒªãƒƒã‚¯ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰æ“ä½œã§ãã¾ã™ã€‚",
+                ToolTipIcon.Info
+            );
+
+            // åˆæœŸè¡¨ç¤ºç”¨ã«ãƒ†ã‚­ã‚¹ãƒˆæ•´ãˆã‚‹
+            UpdateToggleAText(toggleAItem);
+            UpdateToggleBText(toggleBItem);
+        }
+
+        private void UpdateToggleAText(ToolStripMenuItem item)
+        {
+            item.Text = _featureAEnabled ? "æ©Ÿèƒ½A æœ‰åŠ¹ (ON)" : "æ©Ÿèƒ½A ç„¡åŠ¹ (OFF)";
+        }
+
+        private void UpdateToggleBText(ToolStripMenuItem item)
+        {
+            item.Text = _featureBEnabled ? "æ©Ÿèƒ½B æœ‰åŠ¹ (ON)" : "æ©Ÿèƒ½B ç„¡åŠ¹ (OFF)";
+        }
+
+        // ã€Œä»Šã™ãå‡¦ç†å®Ÿè¡Œã€
+        private void OnRunNowClicked(object sender, EventArgs e)
+        {
+            // ãƒˆã‚°ãƒ«çŠ¶æ…‹ã«ã‚ˆã£ã¦å‡¦ç†ã‚’åˆ†å²
+            if (_featureAEnabled)
+            {
+                // æ©Ÿèƒ½AãŒONã®ã¨ãã®å‡¦ç†
+            }
+
+            if (_featureBEnabled)
+            {
+                // æ©Ÿèƒ½BãŒONã®ã¨ãã®å‡¦ç†
+            }
+
+            _notifyIcon.ShowBalloonTip(
+                800,
+                "å®Ÿè¡Œ",
+                $"å‡¦ç†ã‚’å®Ÿè¡Œã—ã¾ã—ãŸã€‚\nA={_featureAEnabled}, B={_featureBEnabled}",
                 ToolTipIcon.Info
             );
         }
 
-        // ---- ’Êíƒƒjƒ…[ ----
-        private void OnRunNowClicked(object sender, EventArgs e)
-        {
-            File.AppendAllText("log.txt", $"{DateTime.Now} ˆ—Às\n");
-            _notifyIcon.ShowBalloonTip(1000, "ˆ—Š®—¹", "¡‚·‚®Às‚µ‚Ü‚µ‚½B", ToolTipIcon.Info);
-        }
-
-        private void OnOpenLogClicked(object sender, EventArgs e)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = AppDomain.CurrentDomain.BaseDirectory,
-                UseShellExecute = true
-            });
-        }
-
-        // ---- ƒTƒuƒƒjƒ…[‚Ì“®ì ----
-        private void OnTool1Clicked(object sender, EventArgs e)
-        {
-            _notifyIcon.ShowBalloonTip(800, "ƒƒjƒ…[1", "ƒc[ƒ‹1‚ğÀs‚µ‚Ü‚µ‚½B", ToolTipIcon.Info);
-        }
-
-        private void OnTool2Clicked(object sender, EventArgs e)
-        {
-            _notifyIcon.ShowBalloonTip(800, "ƒƒjƒ…[2", "ƒc[ƒ‹2‚ğÀs‚µ‚Ü‚µ‚½B", ToolTipIcon.Info);
-        }
-
-        private void OnTool3Clicked(object sender, EventArgs e)
-        {
-            _notifyIcon.ShowBalloonTip(800, "ƒƒjƒ…[3", "ƒc[ƒ‹3‚ğÀs‚µ‚Ü‚µ‚½B", ToolTipIcon.Info);
-        }
-
-        // ---- I—¹ ----
         private void OnExitClicked(object sender, EventArgs e)
         {
             _notifyIcon.Visible = false;
@@ -122,4 +152,5 @@ namespace TaskTray
             base.Dispose(disposing);
         }
     }
+
 }
