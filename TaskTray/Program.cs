@@ -380,7 +380,7 @@ namespace TaskTray
             launcherMenu.DropDownItems.Add(_launchCurrentEnvItem);
             launcherMenu.DropDownItems.Add(new ToolStripSeparator());
 
-            _envProdItem = CreateEnvItem("Production", AppEnvironment.Prod);
+            _envProdItem = CreateEnvItem("Prod", AppEnvironment.Prod);
             _envStgItem = CreateEnvItem("Staging", AppEnvironment.Staging);
             _envUatItem = CreateEnvItem("UAT", AppEnvironment.Uat);
             _envDevItem = CreateEnvItem("Dev", AppEnvironment.Dev);
@@ -471,7 +471,7 @@ namespace TaskTray
 
         private string GetEnvLabel(AppEnvironment env) => env switch
         {
-            AppEnvironment.Prod => "Production",
+            AppEnvironment.Prod => "Prod",
             AppEnvironment.Staging => "Staging",
             AppEnvironment.Uat => "UAT",
             AppEnvironment.Dev => "Dev",
