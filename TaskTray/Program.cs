@@ -373,17 +373,17 @@ namespace TaskTray
             _menu.Items.Add(appTitleItem);
 
             // ================= 起動ランチャー =================
-            var launcherMenu = new ToolStripMenuItem("起動ランチャー");
+            var launcherMenu = new ToolStripMenuItem("Launcher");
 
             _launchCurrentEnvItem = new ToolStripMenuItem();
             _launchCurrentEnvItem.Click += OnLaunchClicked;
             launcherMenu.DropDownItems.Add(_launchCurrentEnvItem);
             launcherMenu.DropDownItems.Add(new ToolStripSeparator());
 
-            _envProdItem = CreateEnvItem("本番環境", AppEnvironment.Prod);
-            _envStgItem = CreateEnvItem("ステージング環境", AppEnvironment.Staging);
-            _envUatItem = CreateEnvItem("UAT環境", AppEnvironment.Uat);
-            _envDevItem = CreateEnvItem("開発環境", AppEnvironment.Dev);
+            _envProdItem = CreateEnvItem("Production", AppEnvironment.Prod);
+            _envStgItem = CreateEnvItem("Staging", AppEnvironment.Staging);
+            _envUatItem = CreateEnvItem("UAT", AppEnvironment.Uat);
+            _envDevItem = CreateEnvItem("Dev", AppEnvironment.Dev);
 
             launcherMenu.DropDownItems.Add(_envProdItem);
             launcherMenu.DropDownItems.Add(_envStgItem);
@@ -466,15 +466,15 @@ namespace TaskTray
             _envUatItem.Checked = (env == AppEnvironment.Uat);
             _envDevItem.Checked = (env == AppEnvironment.Dev);
 
-            _launchCurrentEnvItem.Text = $"この環境で起動（現在：{GetEnvLabel(env)}）";
+            _launchCurrentEnvItem.Text = $"Launch Selected (Current: {GetEnvLabel(env)})";
         }
 
         private string GetEnvLabel(AppEnvironment env) => env switch
         {
-            AppEnvironment.Prod => "本番",
-            AppEnvironment.Staging => "ステージング",
+            AppEnvironment.Prod => "Production",
+            AppEnvironment.Staging => "Staging",
             AppEnvironment.Uat => "UAT",
-            AppEnvironment.Dev => "開発",
+            AppEnvironment.Dev => "Dev",
             _ => env.ToString()
         };
 
