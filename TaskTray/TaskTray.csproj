@@ -9,14 +9,8 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="app.ico" />
-  </ItemGroup>
 
   <ItemGroup>
-    <None Update="app.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="app.ico" />
   </ItemGroup>
-
 </Project>

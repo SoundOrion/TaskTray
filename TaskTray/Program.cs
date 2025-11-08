@@ -657,9 +657,15 @@ namespace TaskTray
             _menu.Items.Add("終了", null, OnExitClicked);
 
             // ================= NotifyIcon =================
+            //埋め込みリソースの読み込み
+           var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            using Stream? iconStream = asm.GetManifestResourceStream("TaskTray.app.ico");
+            if (iconStream == null)
+                throw new FileNotFoundException("埋め込みリソース 'app.ico' が見つかりません。");
+
             _notifyIcon = new NotifyIcon
             {
-                Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath), //new Icon("app.ico"),
+                Icon = new Icon(iconStream), //Icon.ExtractAssociatedIcon(Application.ExecutablePath), //new Icon("app.ico"),
                 Text = "MyBusinessApp Launcher",
                 ContextMenuStrip = _menu,
                 Visible = true
