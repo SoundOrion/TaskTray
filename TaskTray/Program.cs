@@ -466,7 +466,7 @@ namespace TaskTray
             _envUatItem.Checked = (env == AppEnvironment.Uat);
             _envDevItem.Checked = (env == AppEnvironment.Dev);
 
-            _launchCurrentEnvItem.Text = $"Launch Selected (Current: {GetEnvLabel(env)})";
+            _launchCurrentEnvItem.Text = $"Launch in {GetEnvLabel(env)} Environment";
         }
 
         private string GetEnvLabel(AppEnvironment env) => env switch
