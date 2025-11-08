@@ -9,7 +9,6 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
 
-
   <ItemGroup>
     <EmbeddedResource Include="app.ico" />
   </ItemGroup>

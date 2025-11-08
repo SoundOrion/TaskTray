@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TaskTray
@@ -657,15 +658,11 @@ namespace TaskTray
             _menu.Items.Add("終了", null, OnExitClicked);
 
             // ================= NotifyIcon =================
-            //埋め込みリソースの読み込み
-           var asm = System.Reflection.Assembly.GetExecutingAssembly();
-            using Stream? iconStream = asm.GetManifestResourceStream("TaskTray.app.ico");
-            if (iconStream == null)
-                throw new FileNotFoundException("埋め込みリソース 'app.ico' が見つかりません。");
+            var trayIcon = GetEmbeddedIconOrDefault("TaskTray.app.ico");
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = new Icon(iconStream), //Icon.ExtractAssociatedIcon(Application.ExecutablePath), //new Icon("app.ico"),
+                Icon = trayIcon, //Icon.ExtractAssociatedIcon(Application.ExecutablePath), //new Icon("app.ico"),
                 Text = "MyBusinessApp Launcher",
                 ContextMenuStrip = _menu,
                 Visible = true
@@ -687,6 +684,33 @@ namespace TaskTray
             );
             */
         }
+
+        /// <summary>
+        /// 埋め込みリソースの読み込み
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
+        private Icon GetEmbeddedIconOrDefault(string resourceName)
+        {
+            try
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                using Stream? iconStream = asm.GetManifestResourceStream(resourceName);
+                if (iconStream != null)
+                {
+                    return new Icon(iconStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // ログなどに出しても良い
+                Console.WriteLine($"アイコン読み込み失敗: {ex.Message}");
+            }
+
+            // 埋め込みが見つからなかった場合は既定のシステムアイコン
+            return SystemIcons.Application;
+        }
+
 
         // 環境メニュー項目作成
         private ToolStripMenuItem CreateEnvItem(string text, AppEnvironment env)
