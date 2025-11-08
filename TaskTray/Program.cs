@@ -596,7 +596,6 @@ namespace TaskTray
         private ToolStripMenuItem _envUatItem;
         private ToolStripMenuItem _envDevItem;
         private ToolStripMenuItem _launchCurrentEnvItem;
-        private ToolStripMenuItem _launcherMenu;
 
         public TrayAppContext4()
         {
@@ -611,13 +610,13 @@ namespace TaskTray
             _menu.Items.Add(appTitleItem);
 
             // ================= 起動ランチャー =================
-            _launcherMenu = new ToolStripMenuItem("Launcher");
+            var launcherMenu = new ToolStripMenuItem("Launcher");
 
             // 「現在選択中の環境で起動」メニュー
             _launchCurrentEnvItem = new ToolStripMenuItem();
             _launchCurrentEnvItem.Click += OnLaunchClicked;
-            _launcherMenu.DropDownItems.Add(_launchCurrentEnvItem);
-            _launcherMenu.DropDownItems.Add(new ToolStripSeparator());
+            launcherMenu.DropDownItems.Add(_launchCurrentEnvItem);
+            launcherMenu.DropDownItems.Add(new ToolStripSeparator());
 
             // 環境選択メニュー（クリックしてもメニューは閉じない）
             _envProdItem = CreateEnvItem("Prod", AppEnvironment.Prod);
@@ -625,15 +624,15 @@ namespace TaskTray
             _envUatItem = CreateEnvItem("UAT", AppEnvironment.Uat);
             _envDevItem = CreateEnvItem("Dev", AppEnvironment.Dev);
 
-            _launcherMenu.DropDownItems.Add(_envProdItem);
-            _launcherMenu.DropDownItems.Add(_envStgItem);
-            _launcherMenu.DropDownItems.Add(_envUatItem);
-            _launcherMenu.DropDownItems.Add(_envDevItem);
+            launcherMenu.DropDownItems.Add(_envProdItem);
+            launcherMenu.DropDownItems.Add(_envStgItem);
+            launcherMenu.DropDownItems.Add(_envUatItem);
+            launcherMenu.DropDownItems.Add(_envDevItem);
 
             // 「環境メニューは項目クリックでは閉じない」制御
-            _launcherMenu.DropDown.Closing += LauncherDropDown_Closing;
+            launcherMenu.DropDown.Closing += LauncherDropDown_Closing;
 
-            _menu.Items.Add(_launcherMenu);
+            _menu.Items.Add(launcherMenu);
 
             // ================= ドキュメント =================
             var docsMenu = new ToolStripMenuItem("ドキュメント");
@@ -805,7 +804,6 @@ namespace TaskTray
         {
             _notifyIcon.Visible = false;
             _notifyIcon.Dispose();
-            _launcherMenu.Dispose();
             _menu.Dispose();
             ExitThread();
         }
