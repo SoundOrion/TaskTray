@@ -659,7 +659,7 @@ namespace TaskTray
             // ================= NotifyIcon =================
             _notifyIcon = new NotifyIcon
             {
-                Icon = new Icon("app.ico"),
+                Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath), //new Icon("app.ico"),
                 Text = "MyBusinessApp Launcher",
                 ContextMenuStrip = _menu,
                 Visible = true
