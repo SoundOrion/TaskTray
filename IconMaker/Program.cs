@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using ImageMagick;
+﻿using ImageMagick;
 
 class Program
 {
