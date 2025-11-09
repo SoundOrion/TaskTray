@@ -603,12 +603,12 @@ namespace TaskTray
             // ================= ContextMenuStrip 本体 =================
             _menu = new ContextMenuStrip();
 
-            // アプリ名ヘッダ（飾り）
-            var appTitleItem = new ToolStripMenuItem("★ MyBusinessApp Launcher")
-            {
-                Enabled = false
-            };
-            _menu.Items.Add(appTitleItem);
+            //// アプリ名ヘッダ（飾り）
+            //var appTitleItem = new ToolStripMenuItem("★ MyBusinessApp Launcher")
+            //{
+            //    Enabled = false
+            //};
+            //_menu.Items.Add(appTitleItem);
 
             // ================= 起動ランチャー =================
             var launcherMenu = new ToolStripMenuItem("Launcher");
