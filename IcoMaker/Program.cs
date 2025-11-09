@@ -32,21 +32,60 @@ class Program
                 var fullPath = Path.GetFullPath(input);
                 var ext = Path.GetExtension(fullPath).ToLowerInvariant();
 
-                // 必要なら対応拡張子を絞る
-                if (ext is not ".png" and not ".jpg" and not ".jpeg" and not ".bmp" and not ".gif")
+                //// 必要なら対応拡張子を絞る
+                //if (ext is not ".png" and not ".jpg" and not ".jpeg" and not ".bmp" and not ".gif")
+                //{
+                //    Console.WriteLine($"[SKIP] 対応していない拡張子: {fullPath}");
+                //    errorCount++;
+                //    continue;
+                //}
+
+                //var dir = Path.GetDirectoryName(fullPath)!;
+                //var name = Path.GetFileNameWithoutExtension(fullPath);
+                //var output = Path.Combine(dir, $"{name}.ico");
+
+                //CreateIco(fullPath, output);
+
+                //Console.WriteLine($"[OK] {output}");
+
+                switch (ext)
                 {
-                    Console.WriteLine($"[SKIP] 対応していない拡張子: {fullPath}");
-                    errorCount++;
-                    continue;
+                    case ".png":
+                    case ".jpg":
+                    case ".jpeg":
+                    case ".bmp":
+                    case ".gif":
+                        {
+                            var dir = Path.GetDirectoryName(fullPath)!;
+                            var name = Path.GetFileNameWithoutExtension(fullPath);
+                            var output = Path.Combine(dir, $"{name}.ico");
+
+                            CreateIco(fullPath, output);
+                            Console.WriteLine($"[OK] PNG→ICO: {output}");
+                            break;
+                        }
+
+                    case ".ico":
+                        {
+                            var dir = Path.GetDirectoryName(fullPath)!;
+                            var name = Path.GetFileNameWithoutExtension(fullPath);
+                            var outputDir = Path.Combine(dir, $"{name}_pngs");
+                            Directory.CreateDirectory(outputDir);
+
+                            int count = ExtractPngFromIco(fullPath, outputDir, name);
+
+                            if (count > 0)
+                                Console.WriteLine($"[OK] ICO→PNG: {count}ファイル出力 ({outputDir})");
+                            else
+                                Console.WriteLine($"[WARN] ICO内に画像が見つかりません: {fullPath}");
+                            break;
+                        }
+
+                    default:
+                        Console.WriteLine($"[SKIP] 未対応の拡張子: {fullPath}");
+                        errorCount++;
+                        break;
                 }
-
-                var dir = Path.GetDirectoryName(fullPath)!;
-                var name = Path.GetFileNameWithoutExtension(fullPath);
-                var output = Path.Combine(dir, $"{name}.ico");
-
-                CreateIco(fullPath, output);
-
-                Console.WriteLine($"[OK] {output}");
             }
             catch (Exception ex)
             {
@@ -131,5 +170,39 @@ class Program
 
         // ICOとして書き出し
         icoImages.Write(outputPath, MagickFormat.Ico);
+    }
+
+    /// <summary>
+    /// ICOから全フレームをPNGとして出力
+    /// </summary>
+    private static int ExtractPngFromIco(string icoPath, string outputDir, string baseName)
+    {
+        int index = 0;
+
+        using var images = new MagickImageCollection(icoPath);
+
+        foreach (var frame in images)
+        {
+            // 解像度情報が無い場合もあるので index も付ける
+            string fileName;
+
+            if (frame.Width > 0 && frame.Height > 0)
+            {
+                fileName = $"{baseName}_{frame.Width}x{frame.Height}_{index}.png";
+            }
+            else
+            {
+                fileName = $"{baseName}_{index}.png";
+            }
+
+            string outPath = Path.Combine(outputDir, fileName);
+
+            frame.Format = MagickFormat.Png32;
+            frame.Write(outPath);
+
+            index++;
+        }
+
+        return index;
     }
 }
