@@ -669,7 +669,7 @@ namespace TaskTray
             };
 
             // アイコンのダブルクリックで現在環境を起動
-            _notifyIcon.DoubleClick += OnLaunchClicked;
+            _notifyIcon.DoubleClick += (s, e) => ShowAboutForm();
 
             // 初期環境を反映
             ApplyEnvSelection(_selectedEnv);
@@ -847,5 +847,22 @@ namespace TaskTray
             }
             base.Dispose(disposing);
         }
+
+        private void ShowAboutForm()
+        {
+            // 既に開いていたら再表示せずフォーカス
+            foreach (Form f in Application.OpenForms)
+            {
+                if (f is AboutForm)
+                {
+                    f.Activate();
+                    return;
+                }
+            }
+
+            using var about = new AboutForm();
+            about.ShowDialog();
+        }
+
     }
 }
