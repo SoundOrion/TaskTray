@@ -9,7 +9,7 @@ namespace TaskTray
         {
             Text = "About MyBusinessApp Launcher";
             StartPosition = FormStartPosition.CenterScreen;
-            Size = new Size(420, 320);
+            Size = new Size(420, 340);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -67,16 +67,34 @@ namespace TaskTray
                     UseShellExecute = true
                 });
 
+            // =================== Copyright ===================
+            var copyrightLabel = new Label
+            {
+                Text = $"© {DateTime.Now.Year} Example Corporation. All rights reserved.",
+                Font = new Font("Segoe UI", 8, FontStyle.Italic),
+                ForeColor = Color.DimGray,
+                AutoSize = true,
+                Location = new Point(25, 215)
+            };
+
             // =================== 閉じるボタン ===================
             var closeBtn = new Button
             {
                 Text = "閉じる",
                 DialogResult = DialogResult.OK,
                 Size = new Size(80, 30),
-                Location = new Point(300, 230)
+                Location = new Point(300, 260)
             };
 
-            Controls.AddRange(new Control[] { pictureBox, titleLabel, versionLabel, descLabel, link, closeBtn });
+            Controls.AddRange(new Control[] {
+                pictureBox,
+                titleLabel,
+                versionLabel,
+                descLabel,
+                link,
+                copyrightLabel,
+                closeBtn
+            });
         }
 
         /// <summary>
